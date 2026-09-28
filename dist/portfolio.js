@@ -1,0 +1,9 @@
+'use strict';
+document.querySelector('header>span').textContent='Demo portfolio · materiali e prezzi sintetici';
+document.querySelector('.local').textContent='Senza registrazione';
+document.querySelector('.aside-bottom').innerHTML='<div>Prova personale<small>Salvata solo in questo browser</small><button id="reset-demo" class="text-button">Ricomincia la demo</button></div>';
+document.querySelector('.heading').insertAdjacentHTML('afterend','<article class="card portfolio-intro"><h2>Prova un preventivo</h2><p>Scegli un lavoro qui sotto, modifica materiali e ore, poi salva o stampa. Il listino include 18 articoli di esempio: non usare questa demo per offerte reali.</p><p>I dati restano in questo browser e non sono condivisi con altri visitatori. Usa nomi inventati. Puoi cancellare la prova con “Ricomincia la demo”.</p><a href="https://github.com/andreaperrone1990-gif/Bottega-Il-tuo-preventivo-pronto-all-uso" target="_blank" rel="noopener">Codice e progetto su GitHub</a></article>');
+$('reset-demo').onclick=async()=>{if(!confirm('Cancellare i dati di questa demo nel browser e ripartire?'))return;try{await window.bottegaFlush();localStorage.removeItem(storageKey);pending=false;location.reload()}catch(e){toast(e.message)}};
+if(!draft.customer&&!state.quotes.length){draft.customer='Mario Rossi (esempio)';draft.business='Impianti Esempio';loadEditor()}
+if(document.modelContext?.registerTool)document.modelContext.registerTool({name:'read_quote_summary',description:'Legge il riepilogo della bozza visibile senza modificarla.',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:true},execute(input){if(Object.keys(input||{}).length)throw Error('Nessun parametro previsto');return {title:draft.job,customer:draft.customer,hours:draft.hours,hourlyRate:draft.hourlyRate,...totals()}}});
+

@@ -1,0 +1,11 @@
+'use strict';
+const text=v=>typeof v==='string'&&v.length<=20000;
+const amount=v=>typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=1e8;
+const dictionary=v=>v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).length<=10000;
+const optionalText=(o,k)=>o[k]===undefined||text(o[k]);
+const optionalAmount=(o,k,max=1e8)=>o[k]===undefined||(amount(o[k])&&o[k]<=max);
+const line=l=>l&&text(l.id)&&text(l.name)&&text(l.unit)&&amount(l.qty)&&amount(l.price)&&optionalAmount(l,'costPrice')&&optionalAmount(l,'salePrice')&&['group','catalogId','sku'].every(k=>optionalText(l,k))&&(l.missing===undefined||typeof l.missing==='boolean');
+const answers=a=>a&&Number.isInteger(a.count)&&a.count>=1&&a.count<=1000&&['normal','difficult'].includes(a.access)&&['yes','no'].includes(a.accessories);
+function quote(q){return q&&optionalAmount(q,'markupPercent',10000)&&['business','customer','job','number','date','notes'].every(k=>text(q[k]))&&/^\d{4}-\d{2}-\d{2}$/.test(q.date)&&[0,4,10,22].includes(q.vat)&&(q.laborMode==='hourly'?amount(q.hours)&&q.hours<=100000&&amount(q.hourlyRate)&&q.hourlyRate<=100000:amount(q.labor)&&q.labor<=10000)&&(q.id===null||text(q.id))&&Array.isArray(q.lines)&&q.lines.length<=1000&&q.lines.every(line)&&(!q.recipe||text(q.recipe.id)&&text(q.recipe.key)&&answers(q.recipe.answers))}
+function validState(s){return !!(s&&Array.isArray(s.catalog)&&s.catalog.length<=10000&&s.catalog.every(c=>c&&text(c.id)&&text(c.name)&&text(c.unit)&&amount(c.price)&&optionalAmount(c,'salePrice')&&['group','sku'].every(k=>optionalText(c,k)))&&Array.isArray(s.quotes)&&s.quotes.length<=10000&&s.quotes.every(q=>quote(q)&&text(q.id))&&(s.draft===null||quote(s.draft))&&(!s.settings||optionalAmount(s.settings,'markupPercent',10000)&&amount(s.settings.hourlyRate)&&s.settings.hourlyRate<=100000&&['low','median','high'].includes(s.settings.policy))&&(!s.answers||dictionary(s.answers)&&Object.values(s.answers).every(answers))&&(!s.memory||dictionary(s.memory)&&Object.values(s.memory).every(m=>m&&amount(m.hours)&&m.hours<=100000&&Array.isArray(m.lines)&&m.lines.length<=1000&&m.lines.every(l=>l&&text(l.name)&&text(l.unit)&&text(l.group)&&text(l.catalogId)&&amount(l.price)&&amount(l.qty)))))}
+module.exports={validState};

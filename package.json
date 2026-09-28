@@ -1,0 +1,1 @@
+{"name":"bottega-portfolio","version":"0.1.0","private":true,"description":"Prototipo di preventivi per elettricisti con demo locale senza account","scripts":{"start":"node scripts/serve.cjs","test":"node --test test/*.test.js"},"engines":{"node":">=22.13.0"}}
